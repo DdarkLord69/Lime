@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PostComments">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/basePost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#deffde"
+        android:layout_margin="8dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/ivProfilePic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/placeholder_profile_pic" />
+
+            <TextView
+                android:id="@+id/tvDisplayName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="@string/display_name"
+                android:layout_toEndOf="@+id/ivProfilePic"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvUid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvDisplayName"
+                android:text="\@userid"
+                android:layout_marginStart="23dp"
+                android:layout_toEndOf="@id/ivProfilePic"
+                android:textSize="8sp" />
+
+            <TextView
+                android:id="@+id/tvTimeSincePosted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/btnOptionsMenu"
+                android:layout_alignWithParentIfMissing="true"
+                android:text="now"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/tvContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvDisplayName"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginRight="20dp"
+                android:layout_toEndOf="@id/ivProfilePic"
+                android:text="Vazhkai nadagama? Pirappu porkalama?"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvContent"
+                android:layout_marginStart="45dp"
+                android:text="0"
+                android:layout_marginTop="31dp"/>
+
+            <Button
+                android:id="@+id/btnLike"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_unliked"
+                android:layout_below="@+id/tvContent"
+                android:layout_toEndOf="@+id/tvLikes"
+                android:layout_marginTop="25dp"
+                android:layout_marginStart="8dp" />
+
+            <TextView
+                android:id="@+id/tvComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvContent"
+                android:layout_marginTop="31dp"
+                android:text="0"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="95dp" />
+
+            <Button
+                android:id="@+id/btnComment"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_comment"
+                android:layout_below="@id/tvContent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="54dp"
+                android:layout_marginTop="25dp" />
+
+            <Button
+                android:id="@+id/btnOptionsMenu"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_options_menu"
+                android:layout_alignParentEnd="true"
+                android:visibility="gone"
+                android:layout_marginTop="3dp" />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_comments"
+        android:layout_width="match_parent"
+        android:layout_height="488dp"
+        android:layout_below="@id/basePost"
+        android:layout_above="@id/etAddComment"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp" />
+
+    <EditText
+        android:id="@+id/etAddComment"
+        android:layout_width="403dp"
+        android:layout_height="42dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_toStartOf="@id/btn_add_comment"
+        android:hint="Add Comment..." />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_add_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_add_comment"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="10dp" />
+
+</RelativeLayout>
