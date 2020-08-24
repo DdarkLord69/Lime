@@ -14,9 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lime.EditPost;
-import com.example.lime.OthersProfileActivity;
-import com.example.lime.PostComments;
 import com.example.lime.R;
+import com.example.lime.models.ImagePost;
 import com.example.lime.models.Post;
 import com.example.lime.timeformats.CustomDayTimeFormat;
 import com.example.lime.timeformats.CustomHourTimeFormat;
@@ -47,16 +46,14 @@ import org.ocpsoft.prettytime.units.Year;
 
 import java.util.List;
 
-public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.PostHolder> {
+public class ImagePostAdapter extends FirestoreRecyclerAdapter<ImagePost, ImagePostAdapter.ImagePostHolder> {
 
-    private OnItemClickListener listener;
-
-    public PostAdapter(@NonNull FirestoreRecyclerOptions<Post> options) {
+    public ImagePostAdapter(@NonNull FirestoreRecyclerOptions<ImagePost> options) {
         super(options);
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull final PostHolder holder, final int position, @NonNull final Post model) {
+    protected void onBindViewHolder(@NonNull final ImagePostHolder holder, final int position, @NonNull ImagePost model) {
 
         final PrettyTime p = new PrettyTime();
 
@@ -72,7 +69,8 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
         Picasso.get().load(model.getProfilePicUrl()).into(holder.ivProfilePic);
         holder.tvDisplayName.setText(model.getDisplayName());
         holder.tvUid.setText("@" + model.getUserId());
-        holder.tvContent.setText(model.getPostContent());
+        Picasso.get().load(model.getPostImageUrl()).into(holder.ivContent);
+        holder.tvCaption.setText(model.getCaption());
         holder.tvLikes.setText(String.valueOf(model.getLikedBy().size()));
         if(model.getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             holder.btnLike.setBackgroundResource(R.drawable.ic_liked);
@@ -84,7 +82,6 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
         } else {
             holder.tvTimeSincePosted.setText(p.format(model.getDateAndTimePosted()));
         }
-        holder.tvComments.setText(String.valueOf(model.getComments()));
 
         if(FirebaseAuth.getInstance().getCurrentUser().getUid().equals(model.getUserId())) {
             holder.btnOptionsMenu.setVisibility(View.VISIBLE);
@@ -92,33 +89,13 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
                 @Override
                 public void onClick(final View v) {
                     PopupMenu popupMenu = new PopupMenu(v.getContext(), holder.btnOptionsMenu);
-                    popupMenu.inflate(R.menu.popup_options_menu);
+                    popupMenu.inflate(R.menu.popup_options_menu_two);
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
-                                case R.id.edit_post:
-                                    listener.onEdit(getSnapshots().getSnapshot(position), position);
-                                    /*
-                                    EditPost.content = holder.tvContent.getText().toString();
-                                    EditPost.postRef = getSnapshots().getSnapshot(position).getReference();
-                                    EditPost.whichContent = "postContent";
-                                    v.getContext().startActivity(new Intent(v.getContext(), EditPost.class));
-
-                                     */
-
-                                    return true;
                                 case R.id.delete_post:
                                     getSnapshots().getSnapshot(position).getReference().delete();
-                                    FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).update("postCount", FieldValue.increment(-1));
-                                    getSnapshots().getSnapshot(position).getReference().collection("comments").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                            for(QueryDocumentSnapshot qds : queryDocumentSnapshots) {
-                                                qds.getReference().delete();
-                                            }
-                                        }
-                                    });
                                     return true;
                                 default:
                                     return false;
@@ -135,36 +112,34 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
 
     @NonNull
     @Override
-    public PostHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_item, parent, false);
+    public ImagePostHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_item, parent, false);
 
-        return new PostHolder(v);
+        return new ImagePostHolder(v);
     }
 
-    class PostHolder extends RecyclerView.ViewHolder {
+    public class ImagePostHolder extends RecyclerView.ViewHolder {
         TextView tvDisplayName;
         TextView tvUid;
-        TextView tvContent;
+        ImageView ivContent;
+        TextView tvCaption;
         TextView tvTimeSincePosted;
         TextView tvLikes;
         ImageView ivProfilePic;
         Button btnLike;
-        TextView tvComments;
-        Button btnComment;
         Button btnOptionsMenu;
 
-        public PostHolder(@NonNull final View itemView) {
+        public ImagePostHolder(@NonNull View itemView) {
             super(itemView);
 
             tvDisplayName = itemView.findViewById(R.id.tvDisplayName);
             tvUid = itemView.findViewById(R.id.tvUid);
-            tvContent = itemView.findViewById(R.id.tvContent);
+            ivContent = itemView.findViewById(R.id.ivContent);
+            tvCaption = itemView.findViewById(R.id.tvContent);
             tvTimeSincePosted = itemView.findViewById(R.id.tvTimeSincePosted);
             tvLikes = itemView.findViewById(R.id.tvLikes);
             ivProfilePic = itemView.findViewById(R.id.ivProfilePic);
             btnLike = itemView.findViewById(R.id.btnLike);
-            tvComments = itemView.findViewById(R.id.tvComments);
-            btnComment = itemView.findViewById(R.id.btnComment);
             btnOptionsMenu = itemView.findViewById(R.id.btnOptionsMenu);
 
             btnLike.setOnClickListener(new View.OnClickListener() {
@@ -185,32 +160,6 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
                     });
                 }
             });
-
-            btnComment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    listener.onCommentClick(getSnapshots().getSnapshot(getAdapterPosition()), getAdapterPosition());
-                }
-            });
-
-            tvDisplayName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onProfileClick(getSnapshots().getSnapshot(getAdapterPosition()), getAdapterPosition());
-                }
-            });
-
-
         }
-    }
-
-    public interface OnItemClickListener {
-        void onProfileClick(DocumentSnapshot documentSnapshot, int position);
-        void onCommentClick(DocumentSnapshot documentSnapshot, int position);
-        void onEdit(DocumentSnapshot documentSnapshot, int position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
     }
 }

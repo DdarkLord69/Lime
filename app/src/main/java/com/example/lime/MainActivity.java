@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.lime.fragments.HomeFragment;
+import com.example.lime.fragments.PhotosFragment;
 import com.example.lime.fragments.ProfileFragment;
 import com.example.lime.fragments.UsersFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -55,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case R.id.nav_users:
                             selectedFragment = new UsersFragment();
+                            break;
+                        case R.id.nav_photos:
+                            selectedFragment = new PhotosFragment();
                             break;
                         default:
                             selectedFragment = new HomeFragment();

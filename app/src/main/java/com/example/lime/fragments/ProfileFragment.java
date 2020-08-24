@@ -17,8 +17,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lime.EditPost;
 import com.example.lime.EditProfile;
 import com.example.lime.FollowersList;
+import com.example.lime.OthersProfileActivity;
+import com.example.lime.PostComments;
 import com.example.lime.R;
 import com.example.lime.adapters.PostAdapter;
 import com.example.lime.models.Post;
@@ -130,6 +133,36 @@ public class ProfileFragment extends Fragment {
                 .build();
 
         adapter = new PostAdapter(options);
+
+        adapter.setOnItemClickListener(new PostAdapter.OnItemClickListener() {
+            @Override
+            public void onProfileClick(DocumentSnapshot documentSnapshot, int position) {
+                String uid = documentSnapshot.toObject(Post.class).getUserId();
+                OthersProfileActivity.currentUid = uid;
+                startActivity(new Intent(getContext(), OthersProfileActivity.class));
+            }
+
+            @Override
+            public void onCommentClick(DocumentSnapshot documentSnapshot, int position) {
+                documentSnapshot.getReference().get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Post post = documentSnapshot.toObject(Post.class);
+                        PostComments.model = post;
+                        PostComments.basePostRef = documentSnapshot.getReference();
+                        startActivity(new Intent(getContext(), PostComments.class));
+                    }
+                });
+            }
+
+            @Override
+            public void onEdit(DocumentSnapshot documentSnapshot, int position) {
+                EditPost.content = documentSnapshot.toObject(Post.class).getPostContent();
+                EditPost.postRef = documentSnapshot.getReference();
+                EditPost.whichContent = "postContent";
+                startActivity(new Intent(getContext(), EditPost.class));
+            }
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);

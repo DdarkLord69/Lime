@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class UsersFragmentAdapter extends RecyclerView.Adapter<UsersFragmentAdapter.UsersViewHolder> {
 
     private ArrayList<UsersData> usersList;
+    private OnItemClickListener listener;
 
     public UsersFragmentAdapter(ArrayList<UsersData> usersList) {
         this.usersList = usersList;
@@ -52,7 +53,7 @@ public class UsersFragmentAdapter extends RecyclerView.Adapter<UsersFragmentAdap
         notifyDataSetChanged();
     }
 
-    public static class UsersViewHolder extends RecyclerView.ViewHolder {
+    public class UsersViewHolder extends RecyclerView.ViewHolder {
         public ImageView ivDp;
         public TextView tvDisplayName;
         public TextView tvUid;
@@ -67,10 +68,18 @@ public class UsersFragmentAdapter extends RecyclerView.Adapter<UsersFragmentAdap
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    OthersProfileActivity.currentUid = tvUid.getText().toString().substring(1);
-                    v.getContext().startActivity(new Intent(v.getContext(), OthersProfileActivity.class));
+                    if(getAdapterPosition() != RecyclerView.NO_POSITION && listener != null)
+                    listener.onItemClick(getAdapterPosition());
                 }
             });
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 }

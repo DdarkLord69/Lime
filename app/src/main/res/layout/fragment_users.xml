@@ -15,9 +15,29 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_users_search"
+        android:layout_width="389dp"
+        android:layout_height="251dp"
+        android:layout_below="@id/etUserSearch"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:id="@+id/suggTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Suggested:"
+        android:textSize="18sp"
+        android:textColor="#000"
+        android:layout_below="@id/recycler_view_users_search"
+        android:layout_marginStart="25dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_sugg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/etUserSearch"
+        android:layout_below="@id/suggTitle"
         android:layout_margin="10dp" />
 
 </RelativeLayout>

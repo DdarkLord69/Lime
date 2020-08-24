@@ -16,9 +16,12 @@ import com.example.lime.models.UserinList;
 import com.example.lime.models.UsersData;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.squareup.picasso.Picasso;
 
 public class UserinListAdapter extends FirestoreRecyclerAdapter<UsersData, UserinListAdapter.UserinListHolder> {
+
+    private OnItemClickListener listener;
 
     public UserinListAdapter(@NonNull FirestoreRecyclerOptions<UsersData> options) {
         super(options);
@@ -55,10 +58,17 @@ public class UserinListAdapter extends FirestoreRecyclerAdapter<UsersData, Useri
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    OthersProfileActivity.currentUid = tvUid.getText().toString().substring(1);
-                    v.getContext().startActivity(new Intent(v.getContext(), OthersProfileActivity.class));
+                    listener.onItemClick(getSnapshots().getSnapshot(getAdapterPosition()), getAdapterPosition());
                 }
             });
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(DocumentSnapshot documentSnapshot, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 }

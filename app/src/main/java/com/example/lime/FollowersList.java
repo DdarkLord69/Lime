@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -75,6 +76,14 @@ public class FollowersList extends AppCompatActivity {
                 .build();
 
         adapter = new UserinListAdapter(options);
+
+        adapter.setOnItemClickListener(new UserinListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
+                OthersProfileActivity.currentUid = documentSnapshot.toObject(UsersData.class).getUserId();
+                startActivity(new Intent(getBaseContext(), OthersProfileActivity.class));
+            }
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
         recyclerView.setAdapter(adapter);
